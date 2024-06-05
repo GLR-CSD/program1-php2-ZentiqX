@@ -7,40 +7,45 @@ class Persoon {
     private ?int $id;
 
     /** @var string De voornaam van de persoon */
-    private string $voornaam;
+    private string $naam;
 
     /** @var string De achternaam van de persoon */
-    private string $achternaam;
+    private string $artiesten;
 
     /** @var string|null Het telefoonnummer van de persoon */
-    private ?string $telefoonnummer;
+    private ?string $release_datum;
 
     /** @var string|null Het e-mailadres van de persoon */
-    private ?string $email;
+    private ?string $url;
 
     /** @var string|null Eventuele opmerkingen over de persoon */
-    private ?string $opmerkingen;
+    private ?string $afbeelding;
+
+    /** @var string|null Eventuele opmerkingen over de persoon */
+    private ?string $prijs;
 
     /**
      * Constructor voor het maken van een Persoon object.
      *
      * @param int|null $id Het ID van de persoon.
-     * @param string $voornaam De voornaam van de persoon.
-     * @param string $achternaam De achternaam van de persoon.
-     * @param string|null $telefoonnummer Het telefoonnummer van de persoon (optioneel).
-     * @param string|null $email Het e-mailadres van de persoon (optioneel).
-     * @param string|null $opmerkingen Eventuele opmerkingen over de persoon (optioneel).
+     * @param string $naam De voornaam van de persoon.
+     * @param string $artiesten De achternaam van de persoon.
+     * @param string|null $release_datum Het telefoonnummer van de persoon (optioneel).
+     * @param string|null $url Het e-mailadres van de persoon (optioneel).
+     * @param string|null $afbeelding Eventuele opmerkingen over de persoon (optioneel).
+     * * @param string|null $prijs Eventuele opmerkingen over de persoon (optioneel).
      */
-    public function __construct(?int $id, string $voornaam, string $achternaam, ?string $telefoonnummer,
-                                ?string $email, ?string $opmerkingen)
+    public function __construct(?int $id, string $naam, string $artiesten, ?string $release_datum,
+                                ?string $url, ?string $afbeelding, ?string $prijs)
 
     {
         $this->id = $id;
-        $this->voornaam = $voornaam;
-        $this->achternaam = $achternaam;
-        $this->telefoonnummer = $telefoonnummer;
-        $this->email = $email;
-        $this->opmerkingen = $opmerkingen;
+        $this->naam = $naam;
+        $this->artiesten = $artiesten;
+        $this->release_datum = $release_datum;
+        $this->url = $url;
+        $this->afbeelding = $afbeelding;
+        $this->prijs = $prijs;
     }
 
     /**
@@ -52,26 +57,27 @@ class Persoon {
     public static function getAll(PDO $db): array
     {
         // Voorbereiden van de query
-        $stmt = $db->query("SELECT * FROM persoon");
+        $stmt = $db->query("SELECT * FROM album");
 
         // Array om personen op te slaan
-        $personen = [];
+        $album = [];
 
         // Itereren over de resultaten en personen toevoegen aan de array
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $persoon = new Persoon(
+            $album = new album(
                 $row['id'],
-                $row['voornaam'],
-                $row['achternaam'],
-                $row['telefoonnummer'],
-                $row['email'],
-                $row['opmerkingen']
+                $row['naam'],
+                $row['artiesten'],
+                $row['release_datum'],
+                $row['url'],
+                $row['afbeelding'],
+                $row['prijs']
             );
-            $personen[] = $persoon;
+            $album[] = $album;
         }
 
         // Retourneer array met personen
-        return $personen;
+        return $album;
     }
 
     /**
@@ -81,7 +87,7 @@ class Persoon {
      * @param int $id Het unieke ID van een persoon waarnaar we zoeken.
      * @return Persoon|null Het gevonden Persoon-object of null als er geen overeenkomstige persoon werd gevonden.
      * */
-    public static function findById(PDO $db, int $id): ?Persoon
+    public static function findById(PDO $db, int $id): ?album
     {
         // Voorbereiden van de query
         $stmt = $db->prepare("SELECT * FROM persoon WHERE id = :id");
@@ -90,13 +96,14 @@ class Persoon {
 
         // Retourneer een persoon als gevonden, anders null
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Persoon(
+            return new album(
                 $row['id'],
-                $row['voornaam'],
-                $row['achternaam'],
-                $row['telefoonnummer'],
-                $row['email'],
-                $row['opmerkingen']
+                $row['naam'],
+                $row['artiesten'],
+                $row['release_datum'],
+                $row['url'],
+                $row['afbeelding'],
+                $row['prijs']
             );
         } else {
             return null;
@@ -113,47 +120,49 @@ class Persoon {
     public static function findByAchternaam(PDO $db, string $achternaam): array
     {
         //Zet de achternaam eerst om naar lowercase letters
-        $achternaam = strtolower($achternaam);
+        $naam = strtolower($naam);
 
         // Voorbereiden van de query
-        $stmt = $db->prepare("SELECT * FROM persoon WHERE LOWER(achternaam) LIKE :achternaam");
+        $stmt = $db->prepare("SELECT * FROM persoon WHERE LOWER(naam) LIKE :naam");
 
         // Voeg wildcard toe aan de achternaam
-        $achternaam = "%$achternaam%";
+        $naam = "%$naam%";
 
         // Bind de achternaam aan de query en voer deze uit
-        $stmt->bindParam(':achternaam', $achternaam);
+        $stmt->bindParam(':naam', $naam);
         $stmt->execute();
 
         // Array om personen op te slaan
-        $personen = [];
+        $album = [];
 
         // Itereren over de resultaten en personen toevoegen aan de array
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $personen[] = new Persoon(
+            $album[] = new Persoon(
                 $row['id'],
-                $row['voornaam'],
-                $row['achternaam'],
-                $row['telefoonnummer'],
-                $row['email'],
-                $row['opmerkingen']
+                $row['naam'],
+                $row['artiesten'],
+                $row['release_datum'],
+                $row['url'],
+                $row['afbeelding'],
+                $row['prijs']
             );
         }
 
         // Retourneer array met personen
-        return $personen;
+        return $album;
     }
 
     // Methode om een nieuwe persoon toe te voegen aan de database
     public function save(PDO $db): void
     {
         // Voorbereiden van de query
-        $stmt = $db->prepare("INSERT INTO persoon (voornaam, achternaam, telefoonnummer, email, opmerkingen) VALUES (:voornaam, :achternaam, :telefoonnummer, :email, :opmerkingen)");
-        $stmt->bindParam(':voornaam', $this->voornaam);
-        $stmt->bindParam(':achternaam', $this->achternaam);
-        $stmt->bindParam(':telefoonnummer', $this->telefoonnummer);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':opmerkingen', $this->opmerkingen);
+        $stmt = $db->prepare("INSERT INTO persoon (naam, artiesten, release_datum, url, afbeelding, prijs) VALUES (:naam, :artiesten, :release_datum, :url, :afbeelding, :prijs)");
+        $stmt->bindParam(':naam', $this->naam);
+        $stmt->bindParam(':artiesten', $this->artiesten);
+        $stmt->bindParam(':release_datum', $this->release_datum);
+        $stmt->bindParam(':url', $this->url);
+        $stmt->bindParam(':afbeelding', $this->afbeelding);
+        $stmt->bindParam(':prijs', $this->prijs);
         $stmt->execute();
     }
 
@@ -163,11 +172,11 @@ class Persoon {
         // Voorbereiden van de query
         $stmt = $db->prepare("UPDATE persoon SET voornaam = :voornaam, achternaam = :achternaam, telefoonnummer = :telefoonnummer, email = :email, opmerkingen = :opmerkingen WHERE id = :id");
         $stmt->bindParam(':id', $this->id);
-        $stmt->bindParam(':voornaam', $this->voornaam);
-        $stmt->bindParam(':achternaam', $this->achternaam);
-        $stmt->bindParam(':telefoonnummer', $this->telefoonnummer);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':opmerkingen', $this->opmerkingen);
+        $stmt->bindParam(':naam', $this->voornaam);
+        $stmt->bindParam(':artiesten', $this->achternaam);
+        $stmt->bindParam(':release_datum', $this->telefoonnummer);
+        $stmt->bindParam(':url', $this->email);
+        $stmt->bindParam(':afb ', $this->opmerkingen);
         $stmt->execute();
     }
 

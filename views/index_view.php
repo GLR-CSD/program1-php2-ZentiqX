@@ -1,77 +1,61 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personenlijst</title>
-    <link rel="stylesheet" href="public/css/simple.css">
+    <title>Album Overzicht</title>
+    <link rel="stylesheet" href="../public/css/simple.css">
 </head>
 <body>
-<h1>Personenlijst</h1>
+<h1>Album Overzicht</h1>
 <table>
     <tr>
         <th>ID</th>
-        <th>Voornaam</th>
-        <th>Achternaam</th>
-        <th>Telefoonnummer</th>
-        <th>Email</th>
-        <th>Opmerkingen</th>
+        <th>Naam</th>
+        <th>Artiesten</th>
+        <th>Release Datum</th>
+        <th>URL</th>
+        <th>Afbeelding</th>
+        <th>Prijs</th>
     </tr>
-    <?php foreach ($personen as $persoon): ?>
+    <?php foreach ($album as $album): ?>
         <tr>
-            <td><?= $persoon->getId() ?></td>
-            <td><?= $persoon->getVoornaam() ?></td>
-            <td><?= $persoon->getAchternaam() ?></td>
-            <td><?= $persoon->getTelefoonnummer() ?></td>
-            <td><?= $persoon->getEmail() ?></td>
-            <td><?= $persoon->getOpmerkingen() ?></td>
+            <td><?= htmlspecialchars($album->getId()) ?></td>
+            <td><?= htmlspecialchars($album->getNaam()) ?></td>
+            <td><?= htmlspecialchars($album->getArtiesten()) ?></td>
+            <td><?= htmlspecialchars($album->getReleaseDatum()) ?></td>
+            <td><a href="<?= htmlspecialchars($album->getUrl()) ?>"><?= htmlspecialchars($album->getUrl()) ?></a></td>
+            <td><img src="<?= htmlspecialchars($album->getAfbeelding()) ?>" alt="Afbeelding" width="100"></td>
+            <td><?= htmlspecialchars($album->getPrijs()) ?></td>
         </tr>
     <?php endforeach; ?>
 </table>
 
-<div class="notice">
-    <h2>Persoon Toevoegen:</h2>
-    <?php if (!empty($errors)): ?>
-        <div style="color: red;">
-            <ul>
-                <?php foreach ($errors as $error): ?>
-                    <li><?= $error ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-    <form action="toevoegen.php" method="post">
-        <label for="voornaam">Voornaam:</label>
-        <input type="text" id="voornaam" name="voornaam" value="<?= $formValues['voornaam'] ?? '' ?>" required>
-        <?php if (isset($errors['voornaam'])): ?>
-            <span style="color: red;"><?= $errors['voornaam'] ?></span>
-        <?php endif; ?><br>
+<h2>Nieuw Album Toevoegen</h2>
+<form action="toevoegen.php" method="post" enctype="multipart/form-data">
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam" name="naam" required>
+    <br>
 
-        <label for="achternaam">Achternaam:</label>
-        <input type="text" id="achternaam" name="achternaam" value="<?= $formValues['achternaam'] ?? '' ?>"  required>
-        <?php if (isset($errors['achternaam'])): ?>
-            <span style="color: red;"><?= $errors['achternaam'] ?></span>
-        <?php endif; ?><br>
+    <label for="artiesten">Artiesten:</label>
+    <input type="text" id="artiesten" name="artiesten" required>
+    <br>
 
-        <label for="telefoonnummer">Telefoonnummer:</label>
-        <input type="text" id="telefoonnummer" name="telefoonnummer" value="<?= $formValues['telefoonnummer'] ?? '' ?>">
-        <?php if (isset($errors['telefoonnummer'])): ?>
-            <span style="color: red;"><?= $errors['telefoonnummer'] ?></span>
-        <?php endif; ?><br>
+    <label for="release_datum">Datum:</label>
+    <input type="text" id="release_datum" name="release_datum" required>
+    <br>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="<?= $formValues['email'] ?? '' ?>">
-        <?php if (isset($errors['email'])): ?>
-            <span style="color: red;"><?= $errors['email'] ?></span>
-        <?php endif; ?><br>
+    <label for="url">URL link:</label>
+    <input type="text" id="url" name="url" required>
+    <br>
 
-        <label for="opmerkingen">Opmerkingen:</label><br>
-        <textarea id="opmerkingen" name="opmerkingen" rows="4" cols="50">
-            <?= $formValues['opmerkingen'] ?? '' ?>
-        </textarea><br>
-        <input type="submit" value="Toevoegen">
-    </form>
-</div>
+    <label for="afbeelding">Afbeelding:</label>
+    <input type="file" id="afbeelding" name="afbeelding" required>
+    <br>
 
+    <label for="prijs">Prijs:</label>
+    <input type="text" id="prijs" name="prijs" required>
+    <br>
+    <button type="submit">Opslaan</button>
+</form>
 </body>
 </html>
